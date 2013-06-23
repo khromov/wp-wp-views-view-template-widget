@@ -34,8 +34,14 @@ class View_Template_Widget extends WP_Widget
 		
 		if(sizeof($current_view->posts)!=0)
 		{
-			$current_view_title = $current_view->posts[0]->post_title;
-			echo do_shortcode('[wpv-post-body view_template="'. $current_view_title .'"]');
+			
+			if(strstr($current_view->posts[0]->post_title, "'")!==false)
+				echo '<p style="color: red;">Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.</p>';
+			else
+			{
+				$current_view_title = $current_view->posts[0]->post_title;
+				echo do_shortcode("[wpv-post-body view_template='{$current_view_title}']");
+			}
 		}
 		else
 		{
