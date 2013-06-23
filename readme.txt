@@ -17,7 +17,10 @@ Allows you to add a View Template Widget for a particular post type.
 
 - Activate Views for Wordpress
 - Create a View Template
-- Add this widget
+- Add a WP Views Template widget to your site
+
+Note:  
+The title field supports shortcodes, so you can easily use a wpv- shortcode in the widget title.
 
 == Requirements ==
 * PHP 5.3 or higher

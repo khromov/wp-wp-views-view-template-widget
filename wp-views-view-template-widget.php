@@ -14,8 +14,8 @@ class View_Template_Widget extends WP_Widget
 
 	function __construct()
 	{
-		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Add a View Template Widget for a particular post type") );
-		parent::__construct('view_template_widget', __('View Template Widget'), $widget_ops);
+		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template on some or all content types.") );
+		parent::__construct('view_template_widget', __('WP Views Template'), $widget_ops);
 	}
 
 	function widget($args, $instance)
@@ -23,49 +23,75 @@ class View_Template_Widget extends WP_Widget
 		extract($args);
 		$title = apply_filters('widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base);
 		$view_template = $instance['view_template'];
-
-		echo $before_widget;
-		if ($title)
-			echo $before_title . do_shortcode($title) . $after_title;
-
-		/** Find View Template and add it **/
-		$args = array('p' => (int)$view_template, 'post_type' => 'view-template', 'limit' => 1);
-		$current_view = new WP_Query($args);
+		$conditionals_enabled = ($instance['conditionals_enabled'] === 'true'); //Casting
 		
-		if(sizeof($current_view->posts)!=0)
+		$conditionals_show_in = array('post', 'page');
+
+		/**
+		 * Calculate whether the widget should be displayed or not.
+		 **/ 
+		if($conditionals_enabled)
 		{
-			
-			if(strstr($current_view->posts[0]->post_title, "'")!==false)
-				echo '<p style="color: red;">Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.</p>';
+			//Conditional logic performed here
+			//if(is_singular()) can be an alternative, but !is_archive() seems better
+			if(!is_archive() && !is_front_page() && in_array(get_post_type(get_the_ID()), $conditionals_show_in))
+				$show_widget = true;
 			else
-			{
-				$current_view_title = $current_view->posts[0]->post_title;
-				echo do_shortcode("[wpv-post-body view_template='{$current_view_title}']");
-			}
+				$show_widget = false;	
 		}
 		else
-		{
-			echo '<p style="color: red;">Views Template Widget Error - could not find View Template with ID '. (int)$view_template .'</p>';
-		}
+			$show_widget = true;
 		
-		echo $after_widget;	
+		if($show_widget)
+		{
+			echo $before_widget;
+			
+			if ($title)
+				echo $before_title . do_shortcode($title) . $after_title;
+	
+			/** Find View Template and add it **/
+			$args = array('p' => (int)$view_template, 'post_type' => 'view-template', 'limit' => 1);
+			$current_view = new WP_Query($args);
+			
+			if(sizeof($current_view->posts)!=0)
+			{
+				if(strstr($current_view->posts[0]->post_title, "'")!==false)
+					echo '<p style="color: red;">Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.</p>';
+				else
+				{
+					$current_view_title = $current_view->posts[0]->post_title;
+					//Performs the actual output
+					echo do_shortcode("[wpv-post-body view_template='{$current_view_title}']");
+				}
+			}
+			else
+			{
+				echo '<p style="color: red;">Views Template Widget Error - could not find View Template with ID '. (int)$view_template .'</p>';
+			}
+			
+			echo $after_widget;
+		}
 	}
 
 	function form( $instance )
 	{
-		$instance = wp_parse_args((array)$instance, array('title' => '', 'view_template' => '') );
+		$instance = wp_parse_args((array)$instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'false') );
+		
 		$title = $instance['title'];
 		$view_template = $instance['view_template'];
+		$conditionals_enabled = $instance['conditionals_enabled'];
 		
 		$args = array('post_type' => 'view-template', 'order' => 'ASC');
 		$views_list = new WP_Query($args);   
  
 ?>
+		<!-- Widget Title -->
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
 				<strong>
 					<?php _e('Title:'); ?>
 				</strong>
+				<br/>
 				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
 			</label>
 			<br/>
@@ -73,28 +99,67 @@ class View_Template_Widget extends WP_Widget
 				<?php _e('Leave empty to hide the title.'); ?>			
 			</em>
 		</p>
-		<?php if($views_list->have_posts()) : ?>
-			<select id="<?php echo $this->get_field_id('view_template'); ?>" name="<?php echo $this->get_field_name('view_template'); ?>">
-				<?php foreach($views_list->posts as $post) : ?>
-					<option value="<?php echo $post->ID; ?>"<?php echo $post->ID == $view_template ? ' selected="selected"' : ''?>>
-						<?php echo $post->post_title; ?> - <?php echo $post->ID; ?>
-					</option>
-				<?php endforeach; ?>
-			</select>
-		<?php else: ?>
+		
+		<!-- View templates list -->
+		<p>
 			<strong>
-				No View Templates found.
+				<?php _e('View template:'); ?>
 			</strong>
-		<?php endif; ?>
+			<br/>
+			<?php if($views_list->have_posts()) : ?>
+				<select id="<?php echo $this->get_field_id('view_template'); ?>" name="<?php echo $this->get_field_name('view_template'); ?>">
+					<?php foreach($views_list->posts as $post) : ?>
+						<option value="<?php echo $post->ID; ?>"<?php echo $post->ID == $view_template ? ' selected="selected"' : ''?>>
+							<?php echo $post->post_title; ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			<?php else: ?>
+				<strong>
+					<?php _e('No View Templates found.'); ?>
+				</strong>
+			<?php endif; ?>
+		</p>
+		
+		<!-- Conditional logic on/off -->
+		<p>
+			<strong>
+				<?php _e('Conditional logic preferences:'); ?>
+			</strong>		
+			<br/>
+			<input type="radio" name="<?php echo $this->get_field_name('conditionals_enabled'); ?>" id="<?php echo $this->get_field_id('conditionals_enabled'); ?>_option_1" value="false" <?php echo $conditionals_enabled === "false" ? ' checked="checked"' : '' ?> /> Show widget everywhere <br/>
+			<input type="radio" name="<?php echo $this->get_field_name('conditionals_enabled'); ?>" id="<?php echo $this->get_field_id('conditionals_enabled'); ?>_option_2" value="true"  <?php echo $conditionals_enabled === "true" ? ' checked="checked"' : '' ?>/> Show widget when viewing the following post types: <br/>
+		</p>
+		
+		<!-- Checkbox list of Post types -->
+		<p>
+			<strong>
+				<?php _e('Show widget on the following post types:'); ?>
+			</strong>		
+			<br/>
+			<?php
+				//Reference: http://codex.wordpress.org/Function_Reference/get_post_types
+				$types = get_post_types(array('public' => true));
+				
+				foreach($types as $type_key => $type)
+				{
+					//TODO: Fix listing
+					echo $type; echo "<br/>";
+				}
+			 ?>
+		</p>
 <?php
 	}
 
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => '', 'view_template' => ''));
+		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => '', 'view_template' => '', 'conditionals_enabled' => 'false'));
+		
 		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['view_template'] = strip_tags($new_instance['view_template']);
+		$instance['view_template'] = (int)($new_instance['view_template']);
+		$instance['conditionals_enabled'] = $new_instance['conditionals_enabled'];
+		
 		return $instance;
 	}
 }
