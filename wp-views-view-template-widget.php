@@ -11,7 +11,6 @@ License: GPL2
  
 class View_Template_Widget extends WP_Widget
 {
-
 	function __construct()
 	{
 		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template on some or all content types.") );
@@ -73,7 +72,7 @@ class View_Template_Widget extends WP_Widget
 		}
 	}
 
-	function form( $instance )
+	function form($instance)
 	{
 		$instance = wp_parse_args((array)$instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'false') );
 		
@@ -82,9 +81,9 @@ class View_Template_Widget extends WP_Widget
 		$conditionals_enabled = $instance['conditionals_enabled'];
 		
 		$args = array('post_type' => 'view-template', 'order' => 'ASC');
-		$views_list = new WP_Query($args);   
- 
-?>
+		$views_list = new WP_Query($args);
+		?>
+		
 		<!-- Widget Title -->
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
@@ -141,14 +140,12 @@ class View_Template_Widget extends WP_Widget
 				//Reference: http://codex.wordpress.org/Function_Reference/get_post_types
 				$types = get_post_types(array('public' => true));
 				
-				foreach($types as $type_key => $type)
-				{
-					//TODO: Fix listing
-					echo $type; echo "<br/>";
-				}
-			 ?>
+				foreach($types as $type_key => $type) :
+					?><input type="checkbox" name="vehicle" value=""> <?php _e($type)?> <br/> <?php				
+				endforeach;
+		?>
 		</p>
-<?php
+		<?php
 	}
 
 	function update($new_instance, $old_instance)
