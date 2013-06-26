@@ -23,9 +23,8 @@ class View_Template_Widget extends WP_Widget
 		$title = apply_filters('widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base);
 		$view_template = $instance['view_template'];
 		$conditionals_enabled = ($instance['conditionals_enabled'] === 'true'); //Casting
+		$conditionals_post_list = $instance['conditionals_post_list'];
 		
-		$conditionals_show_in = array('post', 'page');
-
 		/**
 		 * Calculate whether the widget should be displayed or not.
 		 **/ 
@@ -33,7 +32,7 @@ class View_Template_Widget extends WP_Widget
 		{
 			//Conditional logic performed here
 			//if(is_singular()) can be an alternative, but !is_archive() seems better
-			if(!is_archive() && !is_front_page() && in_array(get_post_type(get_the_ID()), $conditionals_show_in))
+			if(!is_archive() && !is_front_page() && in_array(get_post_type(get_the_ID()), $conditionals_post_list))
 				$show_widget = true;
 			else
 				$show_widget = false;	
@@ -55,7 +54,7 @@ class View_Template_Widget extends WP_Widget
 			if(sizeof($current_view->posts)!=0)
 			{
 				if(strstr($current_view->posts[0]->post_title, "'")!==false)
-					echo '<p style="color: red;">Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.</p>';
+					echo '<p style="color: red;">'. __('Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.') . '</p>';
 				else
 				{
 					$current_view_title = $current_view->posts[0]->post_title;
@@ -65,7 +64,7 @@ class View_Template_Widget extends WP_Widget
 			}
 			else
 			{
-				echo '<p style="color: red;">Views Template Widget Error - could not find View Template with ID '. (int)$view_template .'</p>';
+				echo '<p style="color: red;">' . __('Views Template Widget Error - could not find View Template with ID: ') . (int)$view_template .'</p>';
 			}
 			
 			echo $after_widget;
@@ -79,9 +78,13 @@ class View_Template_Widget extends WP_Widget
 		$title = $instance['title'];
 		$view_template = $instance['view_template'];
 		$conditionals_enabled = $instance['conditionals_enabled'];
+		$conditionals_post_list = $instance['conditionals_post_list'];
 		
 		$args = array('post_type' => 'view-template', 'order' => 'ASC');
 		$views_list = new WP_Query($args);
+		
+		//Get all post types, reference: http://codex.wordpress.org/Function_Reference/get_post_types
+		$types = get_post_types(array('public' => true));
 		?>
 		
 		<!-- Widget Title -->
@@ -136,26 +139,23 @@ class View_Template_Widget extends WP_Widget
 				<?php _e('Show widget on the following post types:'); ?>
 			</strong>		
 			<br/>
-			<?php
-				//Reference: http://codex.wordpress.org/Function_Reference/get_post_types
-				$types = get_post_types(array('public' => true));
-				
-				foreach($types as $type_key => $type) :
-					?><input type="checkbox" name="vehicle" value=""> <?php _e($type)?> <br/> <?php				
-				endforeach;
-		?>
+			<?php foreach($types as $type_key => $type) : ?>
+				<input type="checkbox" name="<?php echo $this->get_field_name('conditionals_post_list'); ?>[]" id="<?php echo $this->get_field_id('conditionals_post_list'); ?>_<?php echo $type; ?>" value="<?php echo $type; ?>" <?php echo in_array($type, $conditionals_post_list) ? ' checked="checked"' : '' ?>> <?php _e($type)?> <br/>
+			<?php endforeach; ?>
 		</p>
+		
 		<?php
 	}
 
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => '', 'view_template' => '', 'conditionals_enabled' => 'false'));
+		$new_instance = wp_parse_args((array) $new_instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'false', 'conditionals_post_list' => array()));
 		
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['view_template'] = (int)($new_instance['view_template']);
 		$instance['conditionals_enabled'] = $new_instance['conditionals_enabled'];
+		$instance['conditionals_post_list'] = $new_instance['conditionals_post_list'];
 		
 		return $instance;
 	}
