@@ -1,15 +1,17 @@
 === View Template Widget for Toolset Types & Views ===
 Contributors: khromov
-Tags: email, obfuscator, email obfuscator, spam stopper
+Tags: views, toolset, types, view-templates, widget, wp-compatibility
 Requires at least: 3.5
 Tested up to: 3.5.2
 Stable tag: 1.0
 License: GPL2
 
-Allows you to add a View Template Widget for a particular post type.
+Allows you to add a Widget that displays a View Template.
 
 == Description ==
-Allows you to add a View Template Widget for a particular post type.
+Allows you to add a Widget that displays a View Template.
+
+This widget is useful for inserting information boxes for one or more post types. See screenshot for an example.
 
 **Usage**
 
@@ -35,14 +37,11 @@ The title field supports shortcodes, so you can easily use a wpv- shortcode in t
 3. Add a Views Template widget to your site.
 
 == Frequently Asked Questions ==
-
-= No questions available. =
--
-
+- No questions available.
 
 == Screenshots ==
 
-1. Widget view
+1. Workflow example of sidebar widget
 
 == Changelog ==
 = 1.0 =

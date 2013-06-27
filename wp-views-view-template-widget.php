@@ -2,7 +2,7 @@
 /*
 Plugin Name: View Template Widget for Toolset Types & Views
 Plugin URI: http://wordpress.org/extend/plugins/wp-views-view-template-widget
-Description: Allows you to add a View Template Widget for a particular post type.
+Description: Allows you to add a Widget that displays a View Template.
 Author: Stanislav Khromov
 Version: 1.0
 Author URI: http://khromov.wordpress.com
@@ -13,7 +13,7 @@ class View_Template_Widget extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template on some or all content types.") );
+		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template Widget on some or all content types.") );
 		parent::__construct('view_template_widget', __('WP Views Template'), $widget_ops);
 	}
 
@@ -73,7 +73,7 @@ class View_Template_Widget extends WP_Widget
 
 	function form($instance)
 	{
-		$instance = wp_parse_args((array)$instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'false') );
+		$instance = wp_parse_args((array)$instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'true', 'conditionals_post_list' => array('post')));
 		
 		$title = $instance['title'];
 		$view_template = $instance['view_template'];
@@ -98,14 +98,16 @@ class View_Template_Widget extends WP_Widget
 			</label>
 			<br/>
 			<em style="display: block; margin-top: 4px;">
-				<?php _e('Leave empty to hide the title.'); ?>			
+				<?php _e('Shortcodes can be used in title.'); ?>			
+				<br/>
+				<?php _e('Leave empty to hide. '); ?>
 			</em>
 		</p>
 		
 		<!-- View templates list -->
 		<p>
 			<strong>
-				<?php _e('View template:'); ?>
+				<?php _e('View Template:'); ?>
 			</strong>
 			<br/>
 			<?php if($views_list->have_posts()) : ?>
@@ -140,7 +142,7 @@ class View_Template_Widget extends WP_Widget
 			</strong>		
 			<br/>
 			<?php foreach($types as $type_key => $type) : ?>
-				<input type="checkbox" name="<?php echo $this->get_field_name('conditionals_post_list'); ?>[]" id="<?php echo $this->get_field_id('conditionals_post_list'); ?>_<?php echo $type; ?>" value="<?php echo $type; ?>" <?php echo in_array($type, $conditionals_post_list) ? ' checked="checked"' : '' ?>> <?php _e($type)?> <br/>
+				<input type="checkbox" name="<?php echo $this->get_field_name('conditionals_post_list'); ?>[]" id="<?php echo $this->get_field_id('conditionals_post_list'); ?>_<?php echo $type; ?>" value="<?php echo $type; ?>" <?php echo in_array($type, $conditionals_post_list) ? ' checked="checked"' : '' ?>> <?php echo $type ?> <br/>
 			<?php endforeach; ?>
 		</p>
 		
@@ -150,7 +152,7 @@ class View_Template_Widget extends WP_Widget
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'false', 'conditionals_post_list' => array()));
+		$new_instance = wp_parse_args((array) $new_instance, array('title' => '', 'view_template' => '', 'conditionals_enabled' => 'true', 'conditionals_post_list' => array('post')));
 		
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['view_template'] = (int)($new_instance['view_template']);
