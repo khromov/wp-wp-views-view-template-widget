@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: View Template Widget for Toolset Types & Views
-Plugin URI: http://wordpress.org/extend/plugins/wp-views-view-template-widget
-Description: Allows you to add a Widget that displays a View Template.
+Plugin Name: View Template Widget for Toolset Views
+Plugin URI: http://wordpress.org/plugins/view-template-widget-for-toolset-types-views
+Description: Allows you to add a Widget that displays a View Template from Toolset Views
 Author: Stanislav Khromov
 Version: 1.0
 Author URI: http://khromov.wordpress.com
@@ -13,8 +13,8 @@ class View_Template_Widget extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template Widget on some or all content types.") );
-		parent::__construct('view_template_widget', __('WP Views Template'), $widget_ops);
+		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template Widget on some or all content types.", 'view-template-widget-for-toolset-types-views') );
+		parent::__construct('view_template_widget', __('WP Views Template', 'view-template-widget-for-toolset-types-views'), $widget_ops);
 	}
 
 	function widget($args, $instance)
@@ -54,7 +54,7 @@ class View_Template_Widget extends WP_Widget
 			if(sizeof($current_view->posts)!=0)
 			{
 				if(strstr($current_view->posts[0]->post_title, "'")!==false)
-					echo '<p style="color: red;">'. __('Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.') . '</p>';
+					echo '<p style="color: red;">'. __('Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.', 'view-template-widget-for-toolset-types-views') . '</p>';
 				else
 				{
 					$current_view_title = $current_view->posts[0]->post_title;
@@ -64,7 +64,7 @@ class View_Template_Widget extends WP_Widget
 			}
 			else
 			{
-				echo '<p style="color: red;">' . __('Views Template Widget Error - could not find View Template with ID: ') . (int)$view_template .'</p>';
+				echo '<p style="color: red;">' . __('Views Template Widget Error - could not find View Template with ID: ', 'view-template-widget-for-toolset-types-views') . (int)$view_template .'</p>';
 			}
 			
 			echo $after_widget;
@@ -91,23 +91,23 @@ class View_Template_Widget extends WP_Widget
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
 				<strong>
-					<?php _e('Title:'); ?>
+					<?php _e('Title:', 'view-template-widget-for-toolset-types-views'); ?>
 				</strong>
 				<br/>
 				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
 			</label>
 			<br/>
 			<em style="display: block; margin-top: 4px;">
-				<?php _e('Shortcodes can be used in title.'); ?>			
+				<?php _e('Shortcodes can be used in title.', 'view-template-widget-for-toolset-types-views'); ?>			
 				<br/>
-				<?php _e('Leave empty to hide. '); ?>
+				<?php _e('Leave empty to hide. ', 'view-template-widget-for-toolset-types-views'); ?>
 			</em>
 		</p>
 		
 		<!-- View templates list -->
 		<p>
 			<strong>
-				<?php _e('View Template:'); ?>
+				<?php _e('View Template:', 'view-template-widget-for-toolset-types-views'); ?>
 			</strong>
 			<br/>
 			<?php if($views_list->have_posts()) : ?>
@@ -120,7 +120,7 @@ class View_Template_Widget extends WP_Widget
 				</select>
 			<?php else: ?>
 				<strong>
-					<?php _e('No View Templates found.'); ?>
+					<?php _e('No View Templates found.', 'view-template-widget-for-toolset-types-views'); ?>
 				</strong>
 			<?php endif; ?>
 		</p>
@@ -128,7 +128,7 @@ class View_Template_Widget extends WP_Widget
 		<!-- Conditional logic on/off -->
 		<p>
 			<strong>
-				<?php _e('Conditional logic preferences:'); ?>
+				<?php _e('Conditional logic preferences:', 'view-template-widget-for-toolset-types-views'); ?>
 			</strong>		
 			<br/>
 			<input type="radio" name="<?php echo $this->get_field_name('conditionals_enabled'); ?>" id="<?php echo $this->get_field_id('conditionals_enabled'); ?>_option_1" value="false" <?php echo $conditionals_enabled === "false" ? ' checked="checked"' : '' ?> /> Show widget everywhere <br/>
@@ -138,7 +138,7 @@ class View_Template_Widget extends WP_Widget
 		<!-- Checkbox list of Post types -->
 		<p>
 			<strong>
-				<?php _e('Show widget on the following post types:'); ?>
+				<?php _e('Show widget on the following post types:', 'view-template-widget-for-toolset-types-views'); ?>
 			</strong>		
 			<br/>
 			<?php foreach($types as $type_key => $type) : ?>
@@ -163,4 +163,6 @@ class View_Template_Widget extends WP_Widget
 	}
 }
 
+/** Load plugin and translations **/
+load_plugin_textdomain('view-template-widget-for-toolset-types-views', false, basename( dirname( __FILE__ ) ) . '/languages' );
 add_action('widgets_init', create_function('', 'return register_widget("View_Template_Widget");'));?>
