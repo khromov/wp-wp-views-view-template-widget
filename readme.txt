@@ -2,7 +2,7 @@
 Contributors: khromov
 Tags: views, toolset, types, view-templates, widget, wp-compatibility
 Requires at least: 3.5
-Tested up to: 3.5.2
+Tested up to: 3.6
 Stable tag: 1.0
 License: GPL2
 
