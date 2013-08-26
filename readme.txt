@@ -1,16 +1,15 @@
-=== View Template Widget for Toolset Views ===
+=== Content Template Widget for Toolset Views ===
 Contributors: khromov
 Tags: views, toolset, types, view-templates, widget, wp-compatibility
 Requires at least: 3.5
 Tested up to: 3.6
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPL2
 
-Allows you to add a Widget that displays a View Template from Toolset Views
+Allows you to add a Widget that displays a Content Template from Toolset Views
 
 == Description ==
-View Template Widget is useful for inserting information boxes about the current post being displayed in the widget area of your theme.
-It is possible to configure which content types each widget will be shown on.
+Content Template Widget (previously View Template Widget) is useful for inserting information boxes about the current post being displayed in the widget area of your theme. It is possible to configure which content types each widget will be shown on.
 
 This plugin requires Toolset Views. Click the link below for more information on this plugin:  
 http://wp-types.com/home/views-create-elegant-displays-for-your-content/
@@ -20,8 +19,8 @@ http://wp-types.com/home/views-create-elegant-displays-for-your-content/
 *Basic usage*
 
 * Activate Views for Wordpress
-* Create a View Template
-* Add a WP Views Template widget to your site
+* Create a Content Template
+* Add a WP Views Content Template widget to your site
 
 The title field supports shortcodes, so you can easily use a wpv- shortcode in the widget title.
 
@@ -49,9 +48,17 @@ To display a listing in the widget area, use a View Widget instead. (Included in
 1. Workflow example. Adding a sidebar widget to display information about the currently viewed post.
 
 == Changelog ==
+= 1.1 =
+* Updated name to reflect the name change introduced in Views 1.3 (View Template -> Content Template)
+* Fixed a bug where all templates would not be available on certain configurations. (Thanks peter8810)
+
 = 1.0 =
 * Initial release
 
 == Upgrade Notice ==
+= 1.1 =
+* Updated name to reflect the name change introduced in Views 1.3 (View Template -> Content Template)
+* Fixed a bug where all templates would not be available on certain configurations. (Thanks peter8810)
+
 = 1.0 =
 Initial release

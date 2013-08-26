@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: View Template Widget for Toolset Views
+Plugin Name: Content Template Widget for Toolset Views
 Plugin URI: http://wordpress.org/plugins/view-template-widget-for-toolset-types-views
-Description: Allows you to add a Widget that displays a View Template from Toolset Views
+Description: Allows you to add a Widget that displays a Content template (Previously called View Template) from Toolset Views
 Author: Stanislav Khromov
-Version: 1.0
+Version: 1.1
 Author URI: http://khromov.wordpress.com
 License: GPL2
 */
@@ -13,8 +13,8 @@ class View_Template_Widget extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a View Template Widget on some or all content types.", 'view-template-widget-for-toolset-types-views') );
-		parent::__construct('view_template_widget', __('WP Views Template', 'view-template-widget-for-toolset-types-views'), $widget_ops);
+		$widget_ops = array('classname' => 'view_template_widget', 'description' => __( "Displays a Content Template Widget on some or all content types.", 'view-template-widget-for-toolset-types-views') );
+		parent::__construct('view_template_widget', __('WP Views Content Template', 'view-template-widget-for-toolset-types-views'), $widget_ops);
 	}
 
 	function widget($args, $instance)
@@ -48,13 +48,13 @@ class View_Template_Widget extends WP_Widget
 				echo $before_title . do_shortcode($title) . $after_title;
 	
 			/** Find View Template and add it **/
-			$args = array('p' => (int)$view_template, 'post_type' => 'view-template', 'limit' => 1);
+			$args = array('p' => (int)$view_template, 'post_type' => 'view-template', 'posts_per_page' => 1);
 			$current_view = new WP_Query($args);
 			
 			if(sizeof($current_view->posts)!=0)
 			{
 				if(strstr($current_view->posts[0]->post_title, "'")!==false)
-					echo '<p style="color: red;">'. __('Views Template Widget Error - View Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the View Template name and try again.', 'view-template-widget-for-toolset-types-views') . '</p>';
+					echo '<p style="color: red;">'. __('Views Content Template Widget Error - Content Templates with names containing single quotation marks (\') are not supported. Please remove any single quotation marks from the Content Template name and try again.', 'view-template-widget-for-toolset-types-views') . '</p>';
 				else
 				{
 					$current_view_title = $current_view->posts[0]->post_title;
@@ -64,7 +64,7 @@ class View_Template_Widget extends WP_Widget
 			}
 			else
 			{
-				echo '<p style="color: red;">' . __('Views Template Widget Error - could not find View Template with ID: ', 'view-template-widget-for-toolset-types-views') . (int)$view_template .'</p>';
+				echo '<p style="color: red;">' . __('Views Content Template Widget Error - could not find Content Template with ID: ', 'view-template-widget-for-toolset-types-views') . (int)$view_template .'</p>';
 			}
 			
 			echo $after_widget;
@@ -80,7 +80,7 @@ class View_Template_Widget extends WP_Widget
 		$conditionals_enabled = $instance['conditionals_enabled'];
 		$conditionals_post_list = $instance['conditionals_post_list'];
 		
-		$args = array('post_type' => 'view-template', 'order' => 'ASC');
+		$args = array('post_type' => 'view-template', 'order' => 'ASC', 'posts_per_page' => -1);
 		$views_list = new WP_Query($args);
 		
 		//Get all post types, reference: http://codex.wordpress.org/Function_Reference/get_post_types
@@ -107,7 +107,7 @@ class View_Template_Widget extends WP_Widget
 		<!-- View templates list -->
 		<p>
 			<strong>
-				<?php _e('View Template:', 'view-template-widget-for-toolset-types-views'); ?>
+				<?php _e('Content Template:', 'view-template-widget-for-toolset-types-views'); ?>
 			</strong>
 			<br/>
 			<?php if($views_list->have_posts()) : ?>
@@ -120,7 +120,7 @@ class View_Template_Widget extends WP_Widget
 				</select>
 			<?php else: ?>
 				<strong>
-					<?php _e('No View Templates found.', 'view-template-widget-for-toolset-types-views'); ?>
+					<?php _e('No Content Templates found.', 'view-template-widget-for-toolset-types-views'); ?>
 				</strong>
 			<?php endif; ?>
 		</p>
