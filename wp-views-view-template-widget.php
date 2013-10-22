@@ -4,7 +4,7 @@ Plugin Name: Content Template Widget for Toolset Views
 Plugin URI: http://wordpress.org/plugins/view-template-widget-for-toolset-types-views
 Description: Allows you to add a Widget that displays a Content template (Previously called View Template) from Toolset Views
 Author: Stanislav Khromov
-Version: 1.1
+Version: 1.2
 Author URI: http://khromov.wordpress.com
 License: GPL2
 */
@@ -39,18 +39,14 @@ class View_Template_Widget extends WP_Widget
 		}
 		else
 			$show_widget = true;
-		
+
+		//The widget should be shown according to the Widget settings
 		if($show_widget)
 		{
-			echo $before_widget;
-			
-			if ($title)
-				echo $before_title . do_shortcode($title) . $after_title;
-	
 			/** Find View Template and add it **/
 			$args = array('p' => (int)$view_template, 'post_type' => 'view-template', 'posts_per_page' => 1);
 			$current_view = new WP_Query($args);
-			
+
 			if(sizeof($current_view->posts)!=0)
 			{
 				if(strstr($current_view->posts[0]->post_title, "'")!==false)
@@ -58,16 +54,27 @@ class View_Template_Widget extends WP_Widget
 				else
 				{
 					$current_view_title = $current_view->posts[0]->post_title;
-					//Performs the actual output
-					echo do_shortcode("[wpv-post-body view_template='{$current_view_title}']");
+					$shortcode_output = do_shortcode("[wpv-post-body view_template='{$current_view_title}']");
+					$shortcode_output_trimmed = trim($shortcode_output);
+
+					//Performs the actual output, but only if the content template returned anything.
+					if(!empty($shortcode_output_trimmed))
+					{
+						echo $before_widget;
+
+						if (!empty($title))
+							echo $before_title . do_shortcode($title) . $after_title;
+
+						echo $shortcode_output;
+
+						echo $after_widget;
+					}
 				}
 			}
 			else
 			{
 				echo '<p style="color: red;">' . __('Views Content Template Widget Error - could not find Content Template with ID: ', 'view-template-widget-for-toolset-types-views') . (int)$view_template .'</p>';
 			}
-			
-			echo $after_widget;
 		}
 	}
 
@@ -97,7 +104,7 @@ class View_Template_Widget extends WP_Widget
 				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
 			</label>
 			<br/>
-			<em style="display: block; margin-top: 4px;">
+			<em style="display: block; margin-top: 4px; color: #888; font-size: 11px;">
 				<?php _e('Shortcodes can be used in title.', 'view-template-widget-for-toolset-types-views'); ?>			
 				<br/>
 				<?php _e('Leave empty to hide. ', 'view-template-widget-for-toolset-types-views'); ?>
@@ -123,6 +130,9 @@ class View_Template_Widget extends WP_Widget
 					<?php _e('No Content Templates found.', 'view-template-widget-for-toolset-types-views'); ?>
 				</strong>
 			<?php endif; ?>
+			<em style="display: block; margin-top: 4px; color: #888; font-size: 11px;">
+				<?php _e('If the content template does not print anything, the widget will be hidden.', 'view-template-widget-for-toolset-types-views'); ?>
+			</em>
 		</p>
 		
 		<!-- Conditional logic on/off -->
