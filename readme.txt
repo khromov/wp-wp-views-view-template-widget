@@ -2,8 +2,8 @@
 Contributors: khromov
 Tags: views, toolset, types, view-templates, widget, wp-compatibility
 Requires at least: 3.5
-Tested up to: 3.7
-Stable tag: 1.2
+Tested up to: 3.9
+Stable tag: 1.2.1
 License: GPL2
 
 Allows you to add a Widget that displays a Content Template from Toolset Views
@@ -48,6 +48,9 @@ To display a listing in the widget area, use a View Widget instead. (Included in
 1. Workflow example. Adding a sidebar widget to display information about the currently viewed post.
 
 == Changelog ==
+
+= 1.2.1 =
+* Fixed edge case in conditional logic, see: http://wordpress.org/support/topic/widget-shows-on-search-page
 
 = 1.2 =
 * If the content template you use in a widget does not print anything, the widget will not be displayed. More info [here](http://wordpress.org/support/topic/empty-results-1).

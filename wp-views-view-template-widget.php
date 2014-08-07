@@ -4,7 +4,7 @@ Plugin Name: Content Template Widget for Toolset Views
 Plugin URI: http://wordpress.org/plugins/view-template-widget-for-toolset-types-views
 Description: Allows you to add a Widget that displays a Content template (Previously called View Template) from Toolset Views
 Author: Stanislav Khromov
-Version: 1.2
+Version: 1.2.1
 Author URI: http://khromov.wordpress.com
 License: GPL2
 */
@@ -31,8 +31,7 @@ class View_Template_Widget extends WP_Widget
 		if($conditionals_enabled)
 		{
 			//Conditional logic performed here
-			//if(is_singular()) can be an alternative, but !is_archive() seems better
-			if(!is_archive() && !is_front_page() && in_array(get_post_type(get_the_ID()), $conditionals_post_list))
+			if(is_singular() && !is_front_page() && in_array(get_post_type(get_the_ID()), $conditionals_post_list))
 				$show_widget = true;
 			else
 				$show_widget = false;	
