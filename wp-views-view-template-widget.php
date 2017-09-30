@@ -7,6 +7,7 @@ Author: Stanislav Khromov
 Version: 1.2.1
 Author URI: http://khromov.wordpress.com
 License: GPL2
+Text Domain: view-template-widget-for-toolset-types-views
 */
  
 class View_Template_Widget extends WP_Widget
